@@ -15,7 +15,9 @@ namespace AccountService.Data
             // "DefaultConnection" should be in your appsettings.json or environment
             // For example: "Data Source=AccountsDb.db" (SQLite) or 
             // "Server=localhost;Database=AccountsDb;User Id=sa;Password=MySecret123" for SQL Server
-            _connectionString = _configuration.GetConnectionString("DefaultConnection");
+            var dbLocation = Path.Combine(Path.GetTempPath(), "atm.db");
+            var connectionString = $"Data Source={dbLocation}";
+            _connectionString = connectionString;
         }
 
         public IDbConnection CreateConnection()

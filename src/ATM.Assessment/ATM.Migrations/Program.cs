@@ -10,7 +10,8 @@ public class Program
     public static void Main(string[] args)
     {
         // Usually you'd parse the connection string from config or environment variables
-        var connectionString = "Data Source=/tmp/atm.db";
+        var dbLocation = Path.Combine(Path.GetTempPath(), "atm.db");
+        var connectionString = $"Data Source={dbLocation}";
 
         using var host = Host.CreateDefaultBuilder(args)
             .ConfigureServices(services =>

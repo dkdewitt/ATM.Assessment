@@ -4,26 +4,69 @@ import axios from 'axios';
 
 function AccountDashboard() {
   const [account, setAccount] = useState(null);
+  const [accounts, setAccounts] = useState([]);
+  const [selectedAccountId, setSelectedAccountId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Adjust the account id as needed (here we assume account 1 exists)
+  // Fetch the list of accounts on component mount
   useEffect(() => {
-    setLoading(true);
-    axios.get('https://localhost:7122/api/accounts/1')
+    axios
+        .get('https://localhost:7122/api/accounts')
         .then(response => {
-          setAccount(response.data);
-          setLoading(false);
+          setAccounts(response.data);
+          // Set initial selected account to the first in the list (if available)
+          if (response.data && response.data.length > 0) {
+            setSelectedAccountId(response.data[0].accountId);
+          }
         })
         .catch(err => {
-          setError(err.message);
-          setLoading(false);
+          console.error('Error fetching accounts list:', err);
         });
   }, []);
+
+  // Fetch the selected account details every time the selectedAccountId changes
+  useEffect(() => {
+    if (selectedAccountId !== null) {
+      setLoading(true);
+      axios
+          .get(`https://localhost:7122/api/accounts/${selectedAccountId}`)
+          .then(response => {
+            setAccount(response.data);
+            setLoading(false);
+          })
+          .catch(err => {
+            setError(err.message);
+            setLoading(false);
+          });
+    }
+  }, [selectedAccountId]);
+
+  const handleAccountChange = (e) => {
+    // Make sure to parse the value as a number if needed
+    setSelectedAccountId(parseInt(e.target.value, 10));
+  };
 
   return (
       <div className="border border-gray-300 p-4 mb-4 rounded">
         <h2 className="text-lg font-bold mb-2">Account Dashboard</h2>
+        {accounts.length > 0 && (
+            <div className="mb-4">
+              <label htmlFor="accountSelect" className="mr-2">Select Account:</label>
+              <select
+                  id="accountSelect"
+                  value={selectedAccountId || ''}
+                  onChange={handleAccountChange}
+                  className="p-1 border border-gray-300 rounded"
+              >
+                {accounts.map((acc) => (
+                    <option key={acc.accountId} value={acc.accountId}>
+                      {acc.accountType} ({acc.accountId})
+                    </option>
+                ))}
+              </select>
+            </div>
+        )}
         {loading && <p>Loading...</p>}
         {error && <p className="text-red-500">Error: {error}</p>}
         {account ? (
@@ -47,7 +90,7 @@ function DepositForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const data = { accountId: parseInt(accountId), amount: parseFloat(amount) };
+      const data = { accountId: parseInt(accountId, 10), amount: parseFloat(amount) };
       const response = await axios.post('https://localhost:7122/api/accounts/deposit', data);
       setMessage(`Deposit successful. New Balance: ${response.data.balance}`);
     } catch (error) {
@@ -97,7 +140,7 @@ function WithdrawForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const data = { accountId: parseInt(accountId), amount: parseFloat(amount) };
+      const data = { accountId: parseInt(accountId, 10), amount: parseFloat(amount) };
       const response = await axios.post('https://localhost:7122/api/accounts/withdraw', data);
       setMessage(`Withdrawal successful. New Balance: ${response.data.balance}`);
     } catch (error) {
@@ -149,8 +192,8 @@ function TransferForm() {
     e.preventDefault();
     try {
       const data = {
-        sourceAccountId: parseInt(sourceId),
-        destinationAccountId: parseInt(destinationId),
+        sourceAccountId: parseInt(sourceId, 10),
+        destinationAccountId: parseInt(destinationId, 10),
         amount: parseFloat(amount)
       };
       const response = await axios.post('https://localhost:7122/api/accounts/transfer', data);

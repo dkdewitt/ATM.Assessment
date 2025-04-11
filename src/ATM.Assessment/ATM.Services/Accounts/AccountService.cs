@@ -15,6 +15,11 @@ namespace ATM.Services
             _transactionRepository = transactionRepository;
         }
         
+        public async Task<IEnumerable<Account>> GetAccounts()
+        {
+            return await _accountRepository.GetAllAccounts();
+        }
+        
         public async Task<Account?> GetAccountById(int accountId) =>
             await _accountRepository.GetAccountById(accountId);
         

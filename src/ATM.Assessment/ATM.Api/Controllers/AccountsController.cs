@@ -24,6 +24,14 @@ namespace ATM.Web.Controllers
             _transferValidator = transferValidator;
         }
         
+        [HttpGet]
+        public async Task<IActionResult> GetAccounts()
+        {
+            var accounts = await _accountService.GetAccounts();
+            return Ok(accounts);
+        }
+
+        
         [HttpGet("{accountId}")]
         public async Task<IActionResult> GetAccount(int accountId)
         {

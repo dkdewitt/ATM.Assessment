@@ -4,6 +4,7 @@ namespace ATM.Services
 {
     public interface IAccountService
     {
+        Task<IEnumerable<Account>> GetAccounts();
         Task<Account?> GetAccountById(int accountId);
         Task<Account?> GetAccountByType(string accountType);
         Task<IEnumerable<Account>> GetAllAccounts();
