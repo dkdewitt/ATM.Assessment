@@ -110,6 +110,48 @@ Run the Tests
 
         Executes all test projects within the Tests folder.
 
+Running Migrations
+
+The ATM.Data project uses Entity Framework Core for data access and manages the database schema via migrations. To work with migrations, follow these steps:
+
+    Install the EF Core CLI Tools (if not already installed):
+
+dotnet tool install --global dotnet-ef
+
+    If you have an earlier version installed, you may need to update it:
+
+    dotnet tool update --global dotnet-ef
+
+Navigate to the ATM.Data Project Directory:
+
+cd ATM.Data
+
+Add a New Migration:
+
+    When you make changes to your model classes or the DbContext, you can create a new migration by running:
+
+    dotnet ef migrations add <MigrationName>
+
+    Replace <MigrationName> with a meaningful name that describes your changes (e.g., AddAccountTable).
+
+Apply Migrations to Update the Database:
+
+    To update your database schema to the latest migration, run:
+
+    dotnet ef database update
+
+    This command applies all pending migrations to the database.
+
+Additional Migration Commands:
+
+    List Migrations:
+
+dotnet ef migrations list
+
+Remove the Latest Migration (if not applied):
+
+dotnet ef migrations remove
+
 Folder Structure Summary
 
 ATM.Assessment/
